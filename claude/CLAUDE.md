@@ -71,7 +71,7 @@ For new projects, set up this layout (adapt if the project already has one):
     └── .gitignore
 
 - Add `data/` to `.gitignore` by default (data may be sensitive). Also ignore `.venv/`, `__pycache__/`, `renv/library/`, and `.Rproj.user/`.
-- Set up the environment: `uv init` for Python, `renv::init()` for R.
+- Set up the environment: `uv init` for Python, `renv::init()` for R. Set up git and GitHub as described in Version control.
 - Put reusable functions in one module/file, not copied across scripts.
 - Keep results reproducible: set random seeds and write outputs to `results/` from code.
 
@@ -80,6 +80,20 @@ For new projects, set up this layout (adapt if the project already has one):
 - Run the code or tests to verify when possible; report failures honestly.
 - Put throwaway files in a scratch/`tmp` folder, not the project root.
 - For statistical analyses, state the model and key assumptions in plain language.
+
+## Version control
+- New projects: run `git init -b main`, make an initial commit (README.md, .gitignore, folder layout), then create a private GitHub repo with `gh repo create <folder-name> --private --source . --push`. Confirm the repo name with me first.
+- After finishing a plan, or a self-contained piece of work, ask me whether to commit and push. Never commit or push on your own.
+- When asking, show `git status` and a proposed commit message. If the changes cover unrelated things, propose splitting them into separate commits.
+- Don't commit half-finished or broken work, throwaway files, or anything git-ignored (data, secrets, `.env`).
+- Stage files by name; review `git diff --staged` before committing. Avoid `git add -A`.
+- Push to `origin main` after committing, unless I say otherwise. Never force-push.
+
+### Commit messages
+- One line only, no body. Under 72 characters, no trailing period.
+- Imperative mood, capitalised: "Add mixed model for reaction times", not "Added..." or "adding...".
+- Say what changed and, if it fits, why: "Drop participants with <80% accuracy", not "Update script" or "Fix stuff".
+- One logical change per commit.
 
 ## Parallel subagents
 <!--
@@ -126,5 +140,5 @@ Use only when I say "run this task" or "run these tasks in parallel".
 
 ## Safety
 - Ask before destructive or hard-to-reverse actions (deleting files, force-push, overwriting data).
-- Never commit or push unless I ask.
+- Never commit or push without my explicit OK (see Version control).
 - Treat `data/raw/` as read-only.
