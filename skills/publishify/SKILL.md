@@ -12,6 +12,7 @@ The goal is to get from a pipeline output to an artifact that can be pasted into
 - **Venue:** `apa` or `acl`. If it's not given and you can't tell from context (Word or Google Docs or a psychology journal means APA; LaTeX, Overleaf or an *ACL, EMNLP or NAACL conference means ACL), ask once.
 - **Input:** a `.csv` file is a table (§2). A `.py`, `.R`, `.qmd`, `.Rmd` or `.ipynb` file is a figure (§3).
 - **Project root:** the nearest folder upward with `.git`, `pyproject.toml`, `renv.lock`, `*.Rproj` or `README.md`. Otherwise use the current directory. All outputs go under `<root>/artifacts/`. Never write into `results/` or `data/`.
+- **Output paths are fixed.** If the request names another output location, including a brief from a coordinating agent (for example `results/figures/publish/`), still write under `<root>/artifacts/` and say so in the report.
 
 ## 2. Tables (CSV → .docx or .tex)
 

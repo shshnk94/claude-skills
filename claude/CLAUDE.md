@@ -113,6 +113,7 @@ Use only when I say "run this task" or "run these tasks in parallel".
 - One subagent per task, at most 3 at a time. Run a task after the one it depends on, and run tasks that share files or other resources one after another.
 - Subagents can't see our chat. Give each one its goal, the relevant findings from planning, file paths, constraints, and the files or outputs it owns.
 - Every subagent follows the coding rules in this file.
+- When a subagent runs a skill, don't override the skill's output paths or file handling in its brief.
 
 ### Investigate tasks (for example, test a hypothesis)
 - Test it, don't assume it's true. State what evidence would support or contradict it.

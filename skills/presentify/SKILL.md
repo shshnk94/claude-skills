@@ -16,6 +16,7 @@ The user lists every artifact in one prompt, in slide order. All of them go into
 - `script.py` / `script.R` (or `.qmd`, `.Rmd`, `.ipynb`), or `<image> from <script>`, is a **figure slide**.
 - A **bare image with no script**: don't search the project for its source. That costs a lot of time and tokens for an uncertain match. Collect all such images and ask **one** question: "Which scripts make these: …?"
 - `deck=<name>` sets the deck name. It defaults to the project folder's name. The deck is `<root>/artifacts/slides/<name>.pptx`, where the project root is the nearest folder upward with `.git`, `pyproject.toml`, `renv.lock`, `*.Rproj` or `README.md`.
+- **Output paths are fixed.** If the request names another output location, including a brief from a coordinating agent (for example `results/presentation/`), still write under `<root>/artifacts/slides/` and say so in the report.
 - `template=<path.pptx>`: start a new deck from the user's template (its theme, fonts and layouts).
 - `svg`: also export figures as SVG.
 
@@ -39,7 +40,7 @@ Show all slides in one compact list (about 2 lines each) and confirm once. The s
 4. Values are only selected and rounded, never changed. `build_deck.py` runs publishify's integrity check on the cells that are shown.
 
 ## 4. Figure slides
-Read `references/slide_specs.md`. Then edit the named script **in place**:
+Read `references/slide_specs.md`. Then edit the named script **in place**, even if asked to work on a copy: the slide variant lives next to the publication variant, and a copy drifts from it.
 1. **Previous-version block.** Copy the script's current full text into a comment block at the very end of the file:
    ```
    # ---- publishify: previous version (saved YYYY-MM-DD, before slides edit) ----
