@@ -24,7 +24,8 @@ Use the examples below as design precedents, not templates to copy blindly. Appl
    - Keep faint major gridlines only if readers need to read off values.
    - Keep short, outward tick marks on axes that have a numeric scale.
    - Centre facet (strip) titles and drop the strip background. Make top-level strip titles that act as section headers bold (for example "Big Five" | "Mental health"). With many small panels (more than about 6), keep them plain: bolding every panel is noise.
-   - Draw reference lines (baselines, ceilings, chance, means) in mid-grey (`#8C8C8C`), dashed when they cross or compete with bars. Never black: black outranks the data. Keep any zero line thin, and draw it only where values can cross zero.
+   - Draw reference lines that span a whole panel (chance level, a threshold, a mean in a histogram) in mid-grey (`#8C8C8C`), dashed. Never black: black outranks the data. Keep any zero line thin, and draw it only where values can cross zero.
+   - **Shared axes:** label a shared axis once, on the outer panel; repeating it is clutter. Don't leave a bare axis line with no ticks on inner panels. When adjacent panels share both the y scale and the kind of x categories (for example two groups of outcomes), use one panel with a small gap between the groups and bold group headers above them, so there is one y axis. Small multiples with their own x scales (for example histograms of different measures) keep their per-panel axes.
 5. **Render and inspect the figure** when tools are available.
 6. **Deliver** the figure or the reproducible code the user asked for.
 
@@ -67,7 +68,7 @@ Example: GSS age distributions, Chapter 8, Figure 8.16. https://socviz.co/refine
 - Remove a colour or fill legend when axis labels already identify the same categories unambiguously.
 - Prefer direct labels: put series names at the end of lines or next to point clusters, in the series colour. A legend makes the reader look back and forth.
 - Keep a legend when it adds information not shown elsewhere, for example when colour identifies a category across several panels or groups. Place it where it doesn't crowd other text: in one row below the plot, or in empty panel space, never stacked directly on top of facet titles.
-- A reference value that applies to each group (a baseline, a ceiling) can be a dashed line across the group rather than another bar. Give it a legend entry or a label.
+- A reference condition that has a value in each group (a baseline model, a full-information ceiling) is data: draw it as the first bar of each group in light grey (`#B5B5B5`), with its own legend entry. Don't draw it as dashed segments across the group: they cut through bar tops, look like annotations, and read as thresholds.
 
 Example: religious-preference bars, Chapter 4. https://socviz.co/groupfacettx.html
 
@@ -176,7 +177,8 @@ Provide the requested figure or code. Briefly explain consequential design choic
 - **Vertical grouped bars:** `geom_col(position=position_dodge(width=w), width=w, color="white", size=0.15, alpha=0.9)`. The thin white outline keeps neighbouring bars apart. Add a thin `geom_hline(yintercept=0, size=0.4)` when values can go below zero.
 - **Bold section strips:** `strip_text=element_text(weight="bold")`. In a narrow figure, check that the bold title still fits, and drop half a point if it is clipped.
 - **Intervals on bars:** `geom_errorbar(position=<the same dodge>, width=0.25)`, only when every series has one.
-- **Reference line per group:** `geom_errorbar(aes(ymin="r", ymax="r", linetype="series"), data=reference, width=w + 0.1, color="#8C8C8C")` with a dashed `scale_linetype_manual` draws a dashed segment across each group, and the linetype mapping gives it a legend entry.
+- **Reference condition as the first bar:** put it first in the fill factor's categories and give it `#B5B5B5` in `scale_fill_manual`.
+- **Groups on one shared axis:** map each category to a numeric x (`{"O": 1, …, "N": 5, "Dep.": 6.6, "Anx.": 7.6}`, cast with `.astype(float)` since mapping a Categorical stays categorical), use `scale_x_continuous(breaks=…, labels=…, minor_breaks=[], expand=(0, 0.15))`, and add bold headers with `geom_text(data=headers, y=<above the tallest bar>, va="baseline", fontweight="bold")`. Use `va="baseline"`, not `"center"`: descenders shift centred text. Set the y limits so the headers have room.
 - **Legend below the panels:** `theme(legend_position="bottom")` with `guides(fill=guide_legend(nrow=1))`.
 - **Means on an arbitrary scale:** `geom_pointrange` is cleaner than `geom_bar` + `geom_errorbar`.
 - **Sorting:** in plotnine, use `pd.Categorical(..., categories=order, ordered=True)`. In R, use `forcats::fct_reorder()`.

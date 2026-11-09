@@ -19,7 +19,7 @@ Text must be readable from the back of the room. These sizes are at print size:
 - Use a thick line (**1.5–2 pt**, plotnine `size=1.5` or ggplot2 `linewidth = 1.2`) and big points (about 3–4).
 - **Use the paper figure's colours for every series.** Don't grey out series or add accents to tell a story: the user decides the story and adds emphasis later (see `slide_storytelling.md`, which applies only when the user gives one).
 - Grey is for context that is part of the data, such as people below an inclusion cutoff, not for series the story is less about.
-- Section strip titles are bold, as in the paper version. Reference lines are mid-grey (`#8C8C8C`) and dashed, about 1.2 pt, so they guide the eye without outranking the bars.
+- Section titles or group headers are bold, as in the paper version. A reference condition keeps its paper encoding (a light grey first bar). Panel-wide reference lines are mid-grey (`#8C8C8C`) and dashed, about 1.2 pt, so they guide the eye without outranking the data.
 - A category keeps one colour across the paper and every slide. Don't recolour a series per slide: if blue means one model on one slide, it can't mean another model on the next. Projectors wash out pale colours, so if a paper colour is very light, use a deeper member of the same palette for that category everywhere (see `figures.md`).
 - If the figure has no paper version yet, pick colours with the colour rules in `figures.md` and check them with `check_palette.py`.
 - Remove gridlines, or keep only very light major ones if the audience needs to read values. Remove the panel border.
