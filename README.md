@@ -6,7 +6,8 @@ My Claude Code skills for turning research results into publication and presenta
 
 **publishify**: makes publication-ready tables and figures for APA 7th edition (psychology; Word or Google Docs) or ACL (NLP; LaTeX).
 - A CSV becomes an APA `.docx` table or an ACL booktabs `.tex` table.
-- A plotting script (Python or R) is edited in place using Tufte's principles and the venue's size, font and format specs. The previous version is kept as one comment block at the end of the file.
+- A plotting script (Python or R) is edited in place following a design guide based on Healy's [*Data Visualization*](https://socviz.co/) and Tufte (`references/figures.md`), plus the venue's size, font and format specs. The previous version is kept as one comment block at the end of the file.
+- `scripts/check_palette.py` checks a palette under simulated colour-vision deficiency and greyscale.
 - Outputs go to `artifacts/tables/` and `artifacts/figures/`.
 
 ```

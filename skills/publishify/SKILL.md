@@ -1,6 +1,6 @@
 ---
 name: publishify
-description: Turn research results into publication-ready tables and figures for APA 7th edition (psychology journals; Word or Google Docs manuscripts) or ACL (NLP conferences; LaTeX). Given a CSV, it produces an APA-formatted .docx table or an ACL booktabs .tex table. Given a plotting script (Python or R), it edits the script in place to follow Tufte's data-visualization principles and the venue's size, font and format specs, and keeps the previous version as a comment block. Use this whenever the user wants to make a table or figure "publication-ready", "camera-ready", "APA style", "ACL style", "for the paper" or "for the manuscript", or points at a results CSV or figure script and mentions a journal, conference, Word, LaTeX or Overleaf, even if they don't say "publishify".
+description: Turn research results into publication-ready tables and figures for APA 7th edition (psychology journals; Word or Google Docs manuscripts) or ACL (NLP conferences; LaTeX). Given a CSV, it produces an APA-formatted .docx table or an ACL booktabs .tex table. Given a plotting script (Python or R), it edits the script in place to follow Healy's Data Visualization (socviz) and Tufte's principles and the venue's size, font and format specs, and keeps the previous version as a comment block. Use this whenever the user wants to make a table or figure "publication-ready", "camera-ready", "APA style", "ACL style", "for the paper" or "for the manuscript", or points at a results CSV or figure script and mentions a journal, conference, Word, LaTeX or Overleaf, even if they don't say "publishify".
 argument-hint: "<apa|acl> <path to .csv or figure script>"
 ---
 
@@ -36,7 +36,7 @@ The goal is to get from a pipeline output to an artifact that can be pasted into
 
 ## 3. Figures (edit the plotting script in place)
 
-Read `references/figures_tufte.md` and `references/venue_specs.md` first. The user's `~/.claude/CLAUDE.md` coding rules apply to the code you write:
+Read `references/figures.md` (the design guide: workflow, worked examples, colour rules, statistical clarity, final checks) and `references/venue_specs.md` first. The user's `~/.claude/CLAUDE.md` coding rules apply to the code you write:
 - descriptive names
 - no dense one-liners
 - short comments that explain why
@@ -46,11 +46,12 @@ Read `references/figures_tufte.md` and `references/venue_specs.md` first. The us
 1. **Check whether this is a first or a later run.** The script has been through publishify before if it already contains a `publishify: previous version` block or saves into `artifacts/figures/`.
    - **First run:** use the figure the script already produces as the before image. If it doesn't exist, run the script with the project's own runner (`uv run`, or `Rscript` from the project root) to make it. Look at it.
    - **Later run:** the before image is the existing artifact. If the new venue is different, the script already has a publishify design for another venue. Keep that design and its save, and add the new venue (see step 4).
-2. **Plan the changes.** State the figure's one comparison in a sentence, then go through the Tufte checklist. Change presentation only:
+2. **Plan the changes.** Follow the workflow in `figures.md`: state the figure's question in a sentence, then choose the plot, design and colours that make that comparison clear. Change presentation only:
    - **Allowed:**
      - choosing which quantities the script already computes to show (for example, CIs that were computed but not plotted)
      - changing scales, such as log axes, if you say so in the axis title
      - ordering, faceting, colours and labels
+     - hiding intervals that only some series have, so uncertainty is shown consistently (say so in the caption)
    - **Not allowed:** new calculations, different filtering or aggregation, and dropping data points.
    - List every judgment call, such as a log scale or an added CI layer, in the final report so the user can veto it.
 3. **Keep the previous version.** Copy the script's current full text, before your edit, into a comment block at the very end of the file:
@@ -73,9 +74,12 @@ Read `references/figures_tufte.md` and `references/venue_specs.md` first. The us
 5. **Run the edited script and look at the after image** at print size. To view a PDF, first convert it to an image with `pdftoppm -r 300 -png -singlefile <pdf> <scratch_prefix>`.
    - Fix clipped or overlapping labels, unreadable fonts and wasted space, then re-run.
    - Check that fonts are embedded and are not Type 3 by running `pdffonts <pdf>`. The type column should say TrueType or Type 1.
+   - Check the palette you used with `uv run ~/.claude/skills/publishify/scripts/check_palette.py <hex> ...`. If pairs are too close under a colour-vision simulation, separate them with labels, shapes or panels, or swap a colour.
+   - Go through the final checks in `figures.md`.
    - If the script fails, fix it. Don't hand back a broken script.
 6. **Report:**
-   - a short list of what changed and which principle each change serves
+   - a short list of what changed and why, covering only the consequential design choices and any unresolved assumptions (don't repeat the checklist)
+   - the palette check result, or that it wasn't run
    - the output paths
    - for ACL, a ready-to-paste `\begin{figure}[t] ... \caption{} \label{fig:<stem>} \end{figure}` snippet
    - for APA, the "**Figure N**" and *Title* lines to place above the image, and a *Note.* line if it's needed. Leave "N" as a placeholder unless the user gave the number.

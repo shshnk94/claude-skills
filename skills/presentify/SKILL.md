@@ -40,7 +40,7 @@ Show all slides in one compact list (about 2 lines each) and confirm once. The s
 4. Values are only selected and rounded, never changed. `build_deck.py` runs publishify's integrity check on the cells that are shown.
 
 ## 4. Figure slides
-Read `references/slide_specs.md`. Then edit the named script **in place**, even if asked to work on a copy: the slide variant lives next to the publication variant, and a copy drifts from it.
+Read `~/.claude/skills/publishify/references/figures.md` (the shared design guide) and `references/slide_specs.md`. Then edit the named script **in place**, even if asked to work on a copy: the slide variant lives next to the publication variant, and a copy drifts from it.
 1. **Previous-version block.** Copy the script's current full text into a comment block at the very end of the file:
    ```
    # ---- publishify: previous version (saved YYYY-MM-DD, before slides edit) ----
@@ -53,10 +53,10 @@ Read `references/slide_specs.md`. Then edit the named script **in place**, even 
    - **Before replacing an existing block, check it.** Does it hold a save call or output path (for example `_acl.pdf`) that the current code no longer has? Then that code exists nowhere else, and replacing the block would delete it for good. Add it to the step 2 question ("The old block holds the ACL save, which the current code lacks. Restore it, or let it go?") and act on the answer.
 2. **Add a slide variant next to anything that's already there.** Keep any publishify venue styles and saves, and don't remove their outputs. Build the slide version from the same data and plot object, with:
    - a `style_for_slides()` (plotnine) or `theme_slides()` (ggplot2) function
-   - slide-specific layer choices from `slide_specs.md`: grey context with 1–2 accent series, big direct labels, fewer panels, and CIs only if the story is about uncertainty
+   - slide-specific layer choices from `slide_specs.md`: grey context with the story's 1–2 series in their paper colours, big direct labels, fewer panels, and intervals only if the story is about uncertainty (and then on every series)
    - no in-image title
 3. **Save** at the placement size: by default **12.3 × 5.4 in at 300 dpi**, so about 3700 × 1600 px. Save to `<root>/artifacts/slides/figures/<script_stem>_slide.png`, plus `.svg` if asked.
-4. **Check.** Run the script with the project's runner (`uv run` or `Rscript`). Look at the PNG and fix crowding or small text. Make sure the publication outputs still get produced.
+4. **Check.** Run the script with the project's runner (`uv run` or `Rscript`). Look at the PNG and fix crowding or small text, then go through the final checks in `figures.md`. Make sure the publication outputs still get produced.
 
 Data, filtering and statistics stay the same. Choosing which series to emphasise or show is a story choice: list each one in the report.
 
