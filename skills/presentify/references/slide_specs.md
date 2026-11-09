@@ -13,12 +13,12 @@ Text must be readable from the back of the room. These sizes are at print size:
 - Tick labels **16 pt** or more, axis titles **18 pt**, direct labels **18–20 pt**.
 - Use a sans-serif font, named explicitly ("Arial" or "Helvetica"). Generic "sans-serif" may resolve to DejaVu Sans.
 - No in-image title, because the slide title carries the message. Keep axis titles short, with units.
-- No legend box. Label series directly at the line end or next to the point cluster, or put the categories on an axis.
+- No legend box. Label series directly at the line end or next to the point cluster, or put the categories on an axis. When bars are grouped and direct labels would crowd them, a borderless one-row legend under the plot at 18 pt is fine; collapse the grey context series into a single key ("Other …").
 
 ## Ink and colour
 - Use a thick line (**1.5–2 pt**, plotnine `size=1.5` or ggplot2 `linewidth = 1.2`) and big points (about 3–4).
 - **Show context in grey**, using `#B0B0B0` for lines and labels. Show the story's **1–2 focal series** in colour.
-- **Use the paper figure's colours** for those series, so a category keeps one colour across the paper and every slide. Don't recolour a series per slide: if blue means one model on one slide, it can't mean another model on the next. For points and lines, use the darker Dark2 shade of the category's colour, since projectors wash out pale colours (see `figures.md`).
+- **Use the paper figure's colours** for those series, so a category keeps one colour across the paper and every slide. Don't recolour a series per slide: if blue means one model on one slide, it can't mean another model on the next. Projectors wash out pale colours, so if a paper colour is very light, use a deeper member of the same palette for that category everywhere (see `figures.md`).
 - If the figure has no paper version yet, pick colours with the colour rules in `figures.md` and check them with `check_palette.py`.
 - Remove gridlines, or keep only very light major ones if the audience needs to read values. Remove the panel border.
 - Show CIs or error bars only if the story is about uncertainty or overlap. Otherwise mention them in the speaker notes. If shown, show them on every series (see "Show uncertainty consistently" in `figures.md`) and make them light (alpha ~0.25 ribbons) so the means stand out.

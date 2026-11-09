@@ -1,6 +1,8 @@
 # Research figures
 
-Create figures that make the intended comparison easy to see. Use Kieran Healy's *Data Visualization* (https://socviz.co/) as the main design reference, together with Tufte's principle that every drop of ink should show data or help read it.
+Create figures that make the intended comparison easy to see, and that people enjoy looking at. Use Kieran Healy's *Data Visualization* (https://socviz.co/) as the main design reference, together with Tufte's principle that every drop of ink should show data or help read it.
+
+Minimalism is not the goal. Tufte cares about beauty too: *The Visual Display of Quantitative Information*, ch. 9 ("Aesthetics and Technique"), and *Envisioning Information*, ch. 5 ("Color and Information": muted fields with small spots of intense colour). Stripping colour and structure until a figure is grey and flat is a failure, just as clutter is. Studies find that moderate embellishment and colour make charts more memorable without hurting accuracy (Bateman et al. 2010; Borkin et al. 2013).
 
 Use the examples below as design precedents, not templates to copy blindly. Apply them in the user's plotting library. Do not switch languages or libraries just to match the book.
 
@@ -10,11 +12,14 @@ Use the examples below as design precedents, not templates to copy blindly. Appl
 2. **Identify the data.** List the variables, units, groups, and any paired or repeated observations.
 3. **Choose a plot that makes the comparison clear.**
    - Never use pie or donut charts; a sorted bar chart or dot plot works better. Never use 3D.
-   - Use bars only for quantities that start at zero, such as counts. For means with intervals, a dot with an error bar is usually cleaner than a bar.
+   - Use bars only for quantities anchored at zero, such as counts or correlations.
+   - For comparing categories with short labels, vertical (grouped) bars are the default: they are the most familiar reading. Go horizontal only for long labels or many categories.
+   - Dots with intervals suit means on an arbitrary scale. Don't switch to them, or to horizontal bars, just to remove a legend.
+   - If the user has said which chart type they prefer, use it.
    - Order categories meaningfully: by value, or in a logical order such as condition or model size. Avoid alphabetical order unless it is the logical order.
    - If more than about 4 series overlap, use small multiples (facets).
    - When readers compare the same categories across many panels, put the categories on an axis rather than in a legend.
-4. **Apply the design and colour rules below.**
+4. **Apply the design and colour rules below.** Give the figure a visual hierarchy: one clear entry point, emphasis where the story is, and context that recedes (light grey, thin lines).
    - Remove ink that carries no data: the panel border, the grey background, minor gridlines.
    - Keep faint major gridlines only if readers need to read off values.
    - Keep short, outward tick marks on axes that have a numeric scale.
@@ -60,7 +65,8 @@ Example: GSS age distributions, Chapter 8, Figure 8.16. https://socviz.co/refine
 ### Redundant legends and direct labels
 - Remove a colour or fill legend when axis labels already identify the same categories unambiguously.
 - Prefer direct labels: put series names at the end of lines or next to point clusters, in the series colour. A legend makes the reader look back and forth.
-- Keep a legend only when it adds information not shown elsewhere. Then place it where it doesn't crowd other text. In particular, don't stack it directly on top of facet titles; put it below the plot or in empty panel space.
+- Keep a legend when it adds information not shown elsewhere, for example when colour identifies a category across several panels or groups. Place it where it doesn't crowd other text: in one row below the plot, or in empty panel space, never stacked directly on top of facet titles.
+- A reference value that applies to each group (a baseline, a ceiling) can be a dashed line across the group rather than another bar. Give it a legend entry or a label.
 
 Example: religious-preference bars, Chapter 4. https://socviz.co/groupfacettx.html
 
@@ -79,10 +85,11 @@ Example: flipped counties, Chapter 8, Figures 8.10–8.13. https://socviz.co/ref
 
 Follow the colour guidance in Chapter 8: https://socviz.co/refineplots.html
 
-- **Unordered categories:** start with an established, muted qualitative palette.
-  - Use ColorBrewer Set2 for filled areas such as bars.
-  - Use Dark2 for small marks such as points and lines, which need more contrast.
-  - Okabe–Ito is a fallback, for when a palette must be colourblind-safe and Set2/Dark2 fail the check below. Its fills are loud, so reserve its strongest colours for highlights.
+- **Unordered categories:** start with an established qualitative palette that is rich but calm.
+  - The default is **Paul Tol's "muted"** palette. It is colourblind-safe, and works for both bars and lines.
+  - Alternatives: ColorBrewer Dark2 (more saturated), and Set2 (pale, best for large filled areas with few categories).
+  - Okabe–Ito is a fallback. Its fills are loud, so reserve its strongest colours for highlights.
+- **Use colour when it carries identity.** If colour lets the reader follow the same category across panels or groups, keep it, even if the axis also names the categories. Flattening every category to one colour removes that, and the figure goes flat.
 - **Ordered magnitudes:** use a sequential palette, such as viridis or a ColorBrewer sequential palette.
 - **Values around a meaningful midpoint:** use a diverging palette, and set the midpoint explicitly.
 - **Highlighting:** use subdued grey for context, and for the reference or baseline condition, with stronger colours for the focal observations.
@@ -144,6 +151,7 @@ Provide the requested figure or code. Briefly explain consequential design choic
 ## Library cues
 
 ### Palettes
+- **Tol muted** (default): `["#332288", "#88CCEE", "#44AA99", "#117733", "#999933", "#DDCC77", "#CC6677", "#882255", "#AA4499"]`. Pair light and deep members (for example `#88CCEE` and `#332288`) when two series must also separate in greyscale.
 - **Set2** (fills): `["#66C2A5", "#FC8D62", "#8DA0CB", "#E78AC3", "#A6D854", "#FFD92F", "#E5C494", "#B3B3B3"]`
 - **Dark2** (points and lines): `["#1B9E77", "#D95F02", "#7570B3", "#E7298A", "#66A61E", "#E6AB02", "#A6761D", "#666666"]`
 - **Okabe–Ito** (fallback): `["#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7", "#000000"]`
@@ -160,7 +168,11 @@ Provide the requested figure or code. Briefly explain consequential design choic
 - **Direct labels:**
   - Add a `geom_text` with `data=` filtered to the last x per series, plus `ha="left"` and some nudge. In R, `ggrepel::geom_text_repel()` is helpful if it's installed.
   - Expand the x scale so labels aren't clipped.
-- **Means with intervals:** use `geom_pointrange` rather than `geom_bar` + `geom_errorbar`.
+- **Vertical grouped bars:** `geom_col(position=position_dodge(width=w), width=w, color="white", size=0.15)`. The thin white outline keeps neighbouring bars apart. Add `geom_hline(yintercept=0)` when values can go below zero.
+- **Intervals on bars:** `geom_errorbar(position=<the same dodge>, width=0.25)`, only when every series has one.
+- **Reference line per group:** `geom_errorbar(aes(ymin="r", ymax="r", linetype="series"), data=reference, width=w + 0.1, linetype dashed)` draws a dashed segment across each group, and the linetype mapping gives it a legend entry.
+- **Legend below the panels:** `theme(legend_position="bottom")` with `guides(fill=guide_legend(nrow=1))`.
+- **Means on an arbitrary scale:** `geom_pointrange` is cleaner than `geom_bar` + `geom_errorbar`.
 - **Sorting:** in plotnine, use `pd.Categorical(..., categories=order, ordered=True)`. In R, use `forcats::fct_reorder()`.
 - **Font:** name it explicitly ("Times New Roman" or "Arial"), not a generic family. See `venue_specs.md`.
 - **PDF fonts:** plotnine renders with matplotlib, so set `matplotlib.rcParams["pdf.fonttype"] = 42` before saving. Otherwise PDFs get Type 3 fonts, which some ACL checks reject.
