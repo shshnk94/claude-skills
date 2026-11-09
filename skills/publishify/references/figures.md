@@ -25,7 +25,7 @@ Use the examples below as design precedents, not templates to copy blindly. Appl
    - Keep short, outward tick marks on axes that have a numeric scale.
    - Centre facet (strip) titles and drop the strip background. Make top-level strip titles that act as section headers bold (for example "Big Five" | "Mental health"). With many small panels (more than about 6), keep them plain: bolding every panel is noise.
    - Draw reference lines that span a whole panel (chance level, a threshold, a mean in a histogram) in mid-grey (`#8C8C8C`), dashed. Never black: black outranks the data. Keep any zero line thin, and draw it only where values can cross zero.
-   - **Shared axes:** label a shared axis once, on the outer panel; repeating it is clutter. Don't leave a bare axis line with no ticks on inner panels. When adjacent panels share both the y scale and the kind of x categories (for example two groups of outcomes), use one panel with a small gap between the groups and bold group headers above them, so there is one y axis. Small multiples with their own x scales (for example histograms of different measures) keep their per-panel axes.
+   - **Facet axes:** facets are separate panels, each with its own axis ticks and labels, so every panel can be read on its own (in a paper or one at a time on a slide). When panels show the same quantity, fix identical limits and breaks across them, so the repeated labels don't hide a changed scale. Never leave a bare axis line without ticks.
 5. **Render and inspect the figure** when tools are available.
 6. **Deliver** the figure or the reproducible code the user asked for.
 
@@ -178,7 +178,7 @@ Provide the requested figure or code. Briefly explain consequential design choic
 - **Bold section strips:** `strip_text=element_text(weight="bold")`. In a narrow figure, check that the bold title still fits, and drop half a point if it is clipped.
 - **Intervals on bars:** `geom_errorbar(position=<the same dodge>, width=0.25)`, only when every series has one.
 - **Reference condition as the first bar:** put it first in the fill factor's categories and give it `#B5B5B5` in `scale_fill_manual`.
-- **Groups on one shared axis:** map each category to a numeric x (`{"O": 1, …, "N": 5, "Dep.": 6.6, "Anx.": 7.6}`, cast with `.astype(float)` since mapping a Categorical stays categorical), use `scale_x_continuous(breaks=…, labels=…, minor_breaks=[], expand=(0, 0.15))`, and add bold headers with `geom_text(data=headers, y=<above the tallest bar>, va="baseline", fontweight="bold")`. Use `va="baseline"`, not `"center"`: descenders shift centred text. Set the y limits so the headers have room.
+- **Labels on every facet:** plotnine (like ggplot2's `facet_grid`) labels only the outer panel's y axis. Pin the scale with `scale_y_continuous(limits=..., breaks=...)`, draw the figure with `plot.draw()`, then on every other panel's matplotlib axes call `tick_params(axis="y", left=True, labelleft=True, ...)` with the first panel's tick length, width, font size and colour, and save with `figure.savefig(...)`. Widen `panel_spacing_x` (a fraction of the figure width, about 0.04–0.07) to make room. In R, `ggh4x::facet_grid2(axes = "y")` or `lemon::facet_rep_grid()` do this directly.
 - **Legend below the panels:** `theme(legend_position="bottom")` with `guides(fill=guide_legend(nrow=1))`.
 - **Means on an arbitrary scale:** `geom_pointrange` is cleaner than `geom_bar` + `geom_errorbar`.
 - **Sorting:** in plotnine, use `pd.Categorical(..., categories=order, ordered=True)`. In R, use `forcats::fct_reorder()`.
