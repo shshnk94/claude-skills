@@ -19,11 +19,12 @@ Use the examples below as design precedents, not templates to copy blindly. Appl
    - Order categories meaningfully: by value, or in a logical order such as condition or model size. Avoid alphabetical order unless it is the logical order.
    - If more than about 4 series overlap, use small multiples (facets).
    - When readers compare the same categories across many panels, put the categories on an axis rather than in a legend.
-4. **Apply the design and colour rules below.** Give the figure a visual hierarchy: one clear entry point, emphasis where the story is, and context that recedes (light grey, thin lines).
+4. **Apply the design and colour rules below.** Give the figure a visual hierarchy: one clear entry point, emphasis where the story is, and context that recedes. Rank emphasis as: section titles, then the data, then reference lines, then gridlines.
    - Remove ink that carries no data: the panel border, the grey background, minor gridlines.
    - Keep faint major gridlines only if readers need to read off values.
    - Keep short, outward tick marks on axes that have a numeric scale.
-   - Centre facet (strip) titles, set them in plain text, and drop the strip background.
+   - Centre facet (strip) titles and drop the strip background. Make top-level strip titles that act as section headers bold (for example "Big Five" | "Mental health"). With many small panels (more than about 6), keep them plain: bolding every panel is noise.
+   - Draw reference lines (baselines, ceilings, chance, means) in mid-grey (`#8C8C8C`), dashed when they cross or compete with bars. Never black: black outranks the data. Keep any zero line thin, and draw it only where values can cross zero.
 5. **Render and inspect the figure** when tools are available.
 6. **Deliver** the figure or the reproducible code the user asked for.
 
@@ -86,8 +87,11 @@ Example: flipped counties, Chapter 8, Figures 8.10–8.13. https://socviz.co/ref
 Follow the colour guidance in Chapter 8: https://socviz.co/refineplots.html
 
 - **Unordered categories:** start with an established qualitative palette that is rich but calm.
-  - The default is **Paul Tol's "muted"** palette. It is colourblind-safe, and works for both bars and lines.
-  - Alternatives: ColorBrewer Dark2 (more saturated), and Set2 (pale, best for large filled areas with few categories).
+  - The default is the **Nature Publishing Group (NPG)** palette (`ggsci::pal_npg`): calm and familiar from journals. Use its colours in the order given under Library cues, so a figure with few categories gets the most distinct colours first.
+  - NPG was not designed for colour-vision deficiency: its red and teal, and its teal and taupe, can collide for some readers. Always run the palette check below, and swap a colliding pair for another NPG colour.
+  - Its pale members (salmon, taupe, mint) work for filled areas such as bars, but are weak for lines and small points.
+  - Soften large filled areas slightly (alpha about 0.9 over white). Never soften lines or points.
+  - Alternatives: Paul Tol's "muted" palette (colourblind-safe by design, a little more saturated), ColorBrewer Dark2 (saturated), and Set2 (pale).
   - Okabe–Ito is a fallback. Its fills are loud, so reserve its strongest colours for highlights.
 - **Use colour when it carries identity.** If colour lets the reader follow the same category across panels or groups, keep it, even if the axis also names the categories. Flattening every category to one colour removes that, and the figure goes flat.
 - **Ordered magnitudes:** use a sequential palette, such as viridis or a ColorBrewer sequential palette.
@@ -151,7 +155,8 @@ Provide the requested figure or code. Briefly explain consequential design choic
 ## Library cues
 
 ### Palettes
-- **Tol muted** (default): `["#332288", "#88CCEE", "#44AA99", "#117733", "#999933", "#DDCC77", "#CC6677", "#882255", "#AA4499"]`. Pair light and deep members (for example `#88CCEE` and `#332288`) when two series must also separate in greyscale.
+- **NPG** (default), in order of use: `["#3C5488", "#00A087", "#E64B35", "#4DBBD5", "#F39B7F", "#8491B4", "#7E6148", "#B09C85", "#91D1C2"]` (navy, teal, red, cyan, salmon, slate, brown, taupe, mint). For two series that must also separate in greyscale, pair a light and a deep member, for example slate `#8491B4` and navy `#3C5488`. For a single-series figure, use navy for lines and teal for fills.
+- **Tol muted**: `["#332288", "#88CCEE", "#44AA99", "#117733", "#999933", "#DDCC77", "#CC6677", "#882255", "#AA4499"]`. Pair light and deep members (for example `#88CCEE` and `#332288`) when two series must also separate in greyscale.
 - **Set2** (fills): `["#66C2A5", "#FC8D62", "#8DA0CB", "#E78AC3", "#A6D854", "#FFD92F", "#E5C494", "#B3B3B3"]`
 - **Dark2** (points and lines): `["#1B9E77", "#D95F02", "#7570B3", "#E7298A", "#66A61E", "#E6AB02", "#A6761D", "#666666"]`
 - **Okabe–Ito** (fallback): `["#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7", "#000000"]`
@@ -168,9 +173,10 @@ Provide the requested figure or code. Briefly explain consequential design choic
 - **Direct labels:**
   - Add a `geom_text` with `data=` filtered to the last x per series, plus `ha="left"` and some nudge. In R, `ggrepel::geom_text_repel()` is helpful if it's installed.
   - Expand the x scale so labels aren't clipped.
-- **Vertical grouped bars:** `geom_col(position=position_dodge(width=w), width=w, color="white", size=0.15)`. The thin white outline keeps neighbouring bars apart. Add `geom_hline(yintercept=0)` when values can go below zero.
+- **Vertical grouped bars:** `geom_col(position=position_dodge(width=w), width=w, color="white", size=0.15, alpha=0.9)`. The thin white outline keeps neighbouring bars apart. Add a thin `geom_hline(yintercept=0, size=0.4)` when values can go below zero.
+- **Bold section strips:** `strip_text=element_text(weight="bold")`. In a narrow figure, check that the bold title still fits, and drop half a point if it is clipped.
 - **Intervals on bars:** `geom_errorbar(position=<the same dodge>, width=0.25)`, only when every series has one.
-- **Reference line per group:** `geom_errorbar(aes(ymin="r", ymax="r", linetype="series"), data=reference, width=w + 0.1, linetype dashed)` draws a dashed segment across each group, and the linetype mapping gives it a legend entry.
+- **Reference line per group:** `geom_errorbar(aes(ymin="r", ymax="r", linetype="series"), data=reference, width=w + 0.1, color="#8C8C8C")` with a dashed `scale_linetype_manual` draws a dashed segment across each group, and the linetype mapping gives it a legend entry.
 - **Legend below the panels:** `theme(legend_position="bottom")` with `guides(fill=guide_legend(nrow=1))`.
 - **Means on an arbitrary scale:** `geom_pointrange` is cleaner than `geom_bar` + `geom_errorbar`.
 - **Sorting:** in plotnine, use `pd.Categorical(..., categories=order, ordered=True)`. In R, use `forcats::fct_reorder()`.

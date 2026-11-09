@@ -17,7 +17,8 @@ Text must be readable from the back of the room. These sizes are at print size:
 
 ## Ink and colour
 - Use a thick line (**1.5–2 pt**, plotnine `size=1.5` or ggplot2 `linewidth = 1.2`) and big points (about 3–4).
-- **Show context in grey**, using `#B0B0B0` for lines and labels. Show the story's **1–2 focal series** in colour.
+- **Show context in grey**, using `#B0B0B0` for lines and labels and `#C8C8C8` for context bars. Show the story's **1–2 focal series** in colour, using the deep NPG members (navy, teal, red) on projectors.
+- Section strip titles are bold, as in the paper version. Reference lines are mid-grey (`#8C8C8C`) and dashed, about 1.2 pt, so they stay visible over grey context bars without outranking the focal series.
 - **Use the paper figure's colours** for those series, so a category keeps one colour across the paper and every slide. Don't recolour a series per slide: if blue means one model on one slide, it can't mean another model on the next. Projectors wash out pale colours, so if a paper colour is very light, use a deeper member of the same palette for that category everywhere (see `figures.md`).
 - If the figure has no paper version yet, pick colours with the colour rules in `figures.md` and check them with `check_palette.py`.
 - Remove gridlines, or keep only very light major ones if the audience needs to read values. Remove the panel border.
