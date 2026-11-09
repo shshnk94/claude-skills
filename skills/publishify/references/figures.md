@@ -8,7 +8,7 @@ Use the examples below as design precedents, not templates to copy blindly. Appl
 
 ## Workflow
 
-1. **Identify the question the figure should answer.** Write it down in one sentence (for example, "fine-tuned models beat zero-shot ones on every dataset"). Every later choice serves that comparison.
+1. **Identify the comparison the figure must make readable**, for example "accuracy of each model on each dataset". Write it down in one sentence. Don't decide which result is the headline: unless the user states a story, make every series equally readable and emphasise none.
 2. **Identify the data.** List the variables, units, groups, and any paired or repeated observations.
 3. **Choose a plot that makes the comparison clear.**
    - Never use pie or donut charts; a sorted bar chart or dot plot works better. Never use 3D.
@@ -19,7 +19,7 @@ Use the examples below as design precedents, not templates to copy blindly. Appl
    - Order categories meaningfully: by value, or in a logical order such as condition or model size. Avoid alphabetical order unless it is the logical order.
    - If more than about 4 series overlap, use small multiples (facets).
    - When readers compare the same categories across many panels, put the categories on an axis rather than in a legend.
-4. **Apply the design and colour rules below.** Give the figure a visual hierarchy: one clear entry point, emphasis where the story is, and context that recedes. Rank emphasis as: section titles, then the data, then reference lines, then gridlines.
+4. **Apply the design and colour rules below.** Give the figure a visual hierarchy: one clear entry point (the section titles and the data), and context that recedes. Rank emphasis as: section titles, then the data, then reference lines, then gridlines.
    - Remove ink that carries no data: the panel border, the grey background, minor gridlines.
    - Keep faint major gridlines only if readers need to read off values.
    - Keep short, outward tick marks on axes that have a numeric scale.
@@ -72,7 +72,7 @@ Example: GSS age distributions, Chapter 8, Figure 8.16. https://socviz.co/refine
 Example: religious-preference bars, Chapter 4. https://socviz.co/groupfacettx.html
 
 ### Highlighting a subset
-When a subset is the focus:
+When the user names a subset as the focus (don't pick one yourself):
 - Draw the remaining observations in subdued grey.
 - Draw the focal observations above the background layer.
 - Use stronger colours for the focal observations.
@@ -96,7 +96,7 @@ Follow the colour guidance in Chapter 8: https://socviz.co/refineplots.html
 - **Use colour when it carries identity.** If colour lets the reader follow the same category across panels or groups, keep it, even if the axis also names the categories. Flattening every category to one colour removes that, and the figure goes flat.
 - **Ordered magnitudes:** use a sequential palette, such as viridis or a ColorBrewer sequential palette.
 - **Values around a meaningful midpoint:** use a diverging palette, and set the midpoint explicitly.
-- **Highlighting:** use subdued grey for context, and for the reference or baseline condition, with stronger colours for the focal observations.
+- **Highlighting (only when the user names the focus):** use subdued grey for context and stronger colours for the focal observations. A reference or baseline condition can be grey without a stated story, because its role is defined by the design.
 - **Consistency:** keep each category's colour the same across related figures, and across the paper and slide versions of a figure.
 - **Purpose:**
   - Do not assign different colours merely to decorate marks.

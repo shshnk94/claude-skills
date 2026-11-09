@@ -1,12 +1,12 @@
 ---
 name: presentify
-description: Turn research results (CSV tables and plotting scripts) into slides for a talk, collected in one 16:9 PowerPoint deck (.pptx), with just enough detail to land the story. Tables become native, editable PowerPoint tables. Figures are re-rendered from their source script as large-font, high-contrast PNGs. Every slide gets a takeaway title, and the details that were cut go into the speaker notes. Use this whenever the user wants results, a table or a figure "for slides", "for a talk", "for a presentation", "for lab meeting", "for a poster or keynote", or "in PowerPoint / Google Slides / Keynote", or wants to simplify a paper figure or table for an audience, even if they don't say "presentify". For journal or conference paper formatting, use publishify instead.
+description: Turn research results (CSV tables and plotting scripts) into slides for a talk, collected in one 16:9 PowerPoint deck (.pptx). Tables become native, editable PowerPoint tables. Figures are re-rendered from their source script as large-font PNGs in the paper figure's colours. Slides are neutral by default (descriptive titles, no story emphasis) so the user can add their own narrative; emphasis and takeaway titles only when the user states the story. Details cut for legibility go into the speaker notes. Use this whenever the user wants results, a table or a figure "for slides", "for a talk", "for a presentation", "for lab meeting", "for a poster or keynote", or "in PowerPoint / Google Slides / Keynote", or wants to simplify a paper figure or table for an audience, even if they don't say "presentify". For journal or conference paper formatting, use publishify instead.
 argument-hint: "[deck=<name>] <file.csv | script.py | image.png from script.py> ... [template=<deck.pptx>] [svg]"
 ---
 
 # presentify
 
-A paper reports everything; a slide shows just enough to make **one point** the audience gets in a few seconds. Everything you cut still matters, so it goes into the speaker notes for Q&A rather than being lost.
+A paper reports everything; a slide shows one artifact large and legible enough to read from the back of the room. **The story is the user's**: make clear, neutral slides they can narrate and emphasise later, and add emphasis only where they ask. Everything you cut for legibility still matters, so it goes into the speaker notes for Q&A rather than being lost.
 
 Requires the publishify skill next to this one (`~/.claude/skills/publishify/scripts/table_format.py` is imported for number formatting and the integrity check).
 
@@ -22,20 +22,22 @@ The user lists every artifact in one prompt, in slide order. All of them go into
 
 Read only the paths given (plus the CSV a script reads, if you need it to understand the plot).
 
-## 2. Find the story, once for the whole deck
-Read `references/slide_storytelling.md`. For each artifact, draft:
-- a **takeaway title**: one sentence stating the finding, not the topic ("Fine-tuned BERT matches the 7B LLM", not "Model results")
-- a **cut list**: what to drop or grey out, and what moves to speaker notes
+## 2. Slide titles and notes, once for the whole deck
+**Don't infer the story.** The user decides which result is the headline, and may not have decided yet. For each artifact, draft:
+- a **descriptive title** naming what is shown ("Assessment accuracy by memory mechanism and outcome"), stating no finding
+- a **cut list**: what is dropped for legibility (rows, metrics, decimals, panels), and what moves to the speaker notes
 
-Show all slides in one compact list (about 2 lines each) and confirm once. The story is the user's call, but one round of confirmation is enough. **The same message** also carries the question about bare images (§1) and any warning about an old previous-version block (§4.1). Then build everything.
+If the user states a story, claim or titles in the request, follow `references/slide_storytelling.md` for those slides instead: a takeaway title and emphasis on what they named.
+
+Ask at most one round of questions, and only when needed: the question about bare images (§1) and any warning about an old previous-version block (§4.1). Otherwise build without asking.
 
 ## 3. Table slides
 1. Write a slide spec. It uses publishify's column format (`source`, `label`, `decimals`, `leading_zero`, `bold_best`, `thousands_separator`) plus:
    - `keep_rows`: raw values of the **first column listed in the spec's `columns`** (not necessarily the CSV's first column), in display order. Use it to keep about 4–6 rows.
-   - `highlight_rows`: raw values in that same column for the row or rows the story is about. These get an accent colour, bold text and a light fill. Highlight every row that the claim is about: if the story is a tie, highlight both.
+   - `highlight_rows`: raw values in that same column for rows to emphasise. These get an accent colour, bold text and a light fill. **Leave it empty unless the user names the rows** (or states a claim about them); then highlight every row the claim is about.
    - `row_labels`: an optional map from a raw value to its display name, for example `{"Fine-tuned_BERT": "Fine-tuned BERT"}`.
    - `font_size`: defaults to 24 for tables of 5 rows or fewer and 20 for longer ones. Never below 18.
-2. Keep 3–4 columns. Use the fewest decimals that support the takeaway honestly: enough to show a real difference, but don't add decimals that turn a tie into a fake gap. Use plain-word headers, and no *SD* or *p* columns. If a qualifier matters ("Mean of 3 seeds; all differences p < .01"), put it in the slide `footer`.
+2. Keep 3–4 columns. Use the fewest decimals that show the differences honestly: enough to show a real difference, but don't add decimals that turn a tie into a fake gap. Use plain-word headers, and no *SD* or *p* columns. If a qualifier matters ("Mean of 3 seeds; all differences p < .01"), put it in the slide `footer`.
 3. If the CSV is long-form or needs pivoting, write a reshaped CSV to the scratchpad. Never edit the source.
 4. Values are only selected and rounded, never changed. `build_deck.py` runs publishify's integrity check on the cells that are shown.
 
@@ -53,12 +55,14 @@ Read `~/.claude/skills/publishify/references/figures.md` (the shared design guid
    - **Before replacing an existing block, check it.** Does it hold a save call or output path (for example `_acl.pdf`) that the current code no longer has? Then that code exists nowhere else, and replacing the block would delete it for good. Add it to the step 2 question ("The old block holds the ACL save, which the current code lacks. Restore it, or let it go?") and act on the answer.
 2. **Add a slide variant next to anything that's already there.** Keep any publishify venue styles and saves, and don't remove their outputs. Build the slide version from the same data and plot object, with:
    - a `style_for_slides()` (plotnine) or `theme_slides()` (ggplot2) function
-   - slide-specific layer choices from `slide_specs.md`: grey context with the story's 1–2 series in their paper colours, big direct labels, fewer panels, and intervals only if the story is about uncertainty (and then on every series)
+   - the paper figure's colours for every series: no greying out and no accent series unless the user asks
+   - legibility-only changes from `slide_specs.md`: larger fonts, thicker lines, direct labels or a large legend, and splitting panels only when they can't be read at slide size
+   - intervals when the paper version shows them (on every series)
    - no in-image title
 3. **Save** at the placement size: by default **12.3 × 5.4 in at 300 dpi**, so about 3700 × 1600 px. Save to `<root>/artifacts/slides/figures/<script_stem>_slide.png`, plus `.svg` if asked.
 4. **Check.** Run the script with the project's runner (`uv run` or `Rscript`). Look at the PNG and fix crowding or small text, then go through the final checks in `figures.md`. Make sure the publication outputs still get produced.
 
-Data, filtering and statistics stay the same. Choosing which series to emphasise or show is a story choice: list each one in the report.
+Data, filtering and statistics stay the same. Grey that is part of the data (for example, people below an inclusion cutoff) stays. Any series dropped for legibility is listed in the report.
 
 ## 5. Build the deck
 1. Write one manifest to the scratchpad, with the slides in the user's order:
@@ -101,9 +105,9 @@ Data, filtering and statistics stay the same. Choosing which series to emphasise
 4. **Report:**
    - the deck path
    - each slide's number, title, what was cut, and what's in its notes
-   - any story choices the user may want to veto
+   - any legibility choices (dropped rows, series or panels) the user may want to undo
 
 ## Principles
-- One message per slide. If an artifact has two stories, suggest two slides.
-- Never change numbers. Only select, round and emphasise.
+- One artifact per slide; the user decides the message. Don't infer a story or emphasise one result over another unless asked.
+- Never change numbers. Only select, round and (when asked) emphasise.
 - Batch every question into one round, and don't search the project when the user can just tell you.
